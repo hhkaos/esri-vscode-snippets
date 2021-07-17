@@ -9,7 +9,7 @@
   "Load a new MapView (2D)": {
     "prefix": "MapView",
     "body": [
-      "const view = new MapView({",
+      "new MapView({",
       "\tcontainer: \"${1:viewDiv}\",",
       "\tmap: ${2:map},",
       "\tzoom: ${3:4},",
@@ -76,17 +76,16 @@
   "Load a queryable, filterable layer": {
     "prefix": "loadLayer (Feature|CSV|GeoJSON|...)",
     "body": [
-      "const layer = new ${1|Feature,Scene,Stream,CSV,GeoJSON|}Layer({",
+      "new ${1|Feature,Scene,Stream,CSV,GeoJSON|}Layer({",
       "\turl: \"${2|service url,file url|}\"",
-      "});",
-      "${3:view}.map.add(layer);"
+      "});"
     ],
     "description": "Server-side layers (FeatureLayer, SceneLayer and StreamLayer) and client-side layers (CSVLayer, GeoJSONLayer, and client side FeatureLayer)"
   },
   "Create FeatureLayer with client-side": {
     "prefix": "featureLayerCS",
     "body": [
-      "const layer = new FeatureLayer({",
+      "new FeatureLayer({",
       "\tsource: graphics,  // array of graphics objects",
       "\tobjectIdField: \"OBJECTID\",",
       "\tfields: [{",
@@ -100,9 +99,7 @@
       "\t\tcontent: \"<img src='{url}'>\"",
       "\t},",
       "\trenderer: simpleRenderer",
-      "});",
-      "",
-      "map.add(layer);"
+      "});"
     ],
     "description": "Using \"source\" property with a Collection of graphics"
   },
@@ -136,7 +133,7 @@
   "Load a new SceneView (3D)": {
     "prefix": "SceneView",
     "body": [
-      "const view = new SceneView({",
+      "new SceneView({",
       "\tmap: ${1:map},",
       "\tcamera: {",
       "\t\tposition: {",
@@ -158,21 +155,19 @@
       "\turl: \"${1:service-url}\"",
       "\tblendMode \"${1|average,color-burn,color-dodge,color,darken,destination-atop,destination-in,destination-out,destination-over,difference,exclusion,hard-light,hue,invert,lighten,lighter,luminosity,minus,multiply,normal,overlay,plus,reflect,saturation,screen,soft-light,source-atop,source-in,source-out,vivid-light,xor|}\":",
       "\teffect: FeatureEffect",
-      "});",
-      "map.add(fl);"
+      "});"
     ],
     "description": "Create an instance of esri/layers/FeatureLayer"
   },
   "Load a new GeoJSONLayer": {
     "prefix": "geojsonLayer",
     "body": [
-      "const geoJSONLayer = new GeoJSONLayer({",
+      "new GeoJSONLayer({",
       "\turl: \"${1:service-url}\",",
       "\tblendMode \"${1|average,color-burn,color-dodge,color,darken,destination-atop,destination-in,destination-out,destination-over,difference,exclusion,hard-light,hue,invert,lighten,lighter,luminosity,minus,multiply,normal,overlay,plus,reflect,saturation,screen,soft-light,source-atop,source-in,source-out,vivid-light,xor|}\":",
       "\teffect: FeatureEffect",
       "\tcopyright: \"${2:data-provider}\",",
-      "});",
-      "map.add(geoJSONLayer);"
+      "});"
     ],
     "description": "Create an instance of esri/layers/GeoJSONLayer"
   },
