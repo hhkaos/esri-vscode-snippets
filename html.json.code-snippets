@@ -1,0 +1,34 @@
+{
+	"Map-centric style": {
+	  "prefix": "Full map layout",
+	  "body": [
+		"<style>",
+		"\thtml,",
+		"\tbody,",
+		"\t#viewDiv {",
+		"\t\tpadding: 0;",
+		"\t\tmargin: 0;",
+		"\t\theight: 100%;",
+		"\t\twidth: 100%;",
+		"\t}",
+		"</style>"
+	  ],
+	  "description": "Sets the map to cover 100% of the screen (width and height)"
+	},
+	// "Set package name and location": {
+	//   "prefix": "dojoConfig",
+	//   "body": [
+	// 	"<script>",
+	// 	"\tconst locationPath = location.pathname.replace(/\\/[^\\/]+$/,\"\");",
+	// 	"\twindow.dojoConfig = {",
+	// 	"\t\tpackages:[{",
+	// 	"\t\t\tname: \"app\",",
+	// 	"\t\t\tlocation: locationPath + \"/app\"",
+	// 	"\t\t}]",
+	// 	"\t};",
+	// 	"</script>"
+	//   ],
+	//   "description": "Sets /app folder to be able to load packages using require([\"app/your_file.js\"]);"
+	// }
+  }
+  
