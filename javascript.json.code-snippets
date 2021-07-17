@@ -1,176 +1,323 @@
 {
-	"Find a layer by it's name": {
-	  "prefix": "findLayer",
-	  "body": [
-		"const fl = view.map.layers.find( l => l.title === \"${1:LayerTitle}\");"
-	  ],
-	  "description": ""
-	},
-	"Load a new MapView (2D)": {
-	  "prefix": "MapView",
-	  "body": [
-		"const view = new MapView({",
-		"\tcontainer: \"${1:viewDiv}\",",
-		"\tmap: ${2:map},",
-		"\tzoom: ${3:4},",
-		"\tcenter: [${4:15,65}]",
-		"});"
-	  ],
-	  "description": "Create an instance of esri/views/MapView"
-	},
-	"Get the API from the CDN": {
-	  "prefix": "getApi",
-	  "body": [
-		"<link rel=\"stylesheet\" href=\"https://js.arcgis.com/${1|4.20,4.19,4.18,4.17,4.16,1.15,4.14|}/esri/css/main.css\">",
-		"<script src=\"https://js.arcgis.com/${2|4.20,4.19,4.18,4.17,4.16,4.15,4.14|}\"></script>"
-	  ],
-	  "description": "Add script and link tags for jsapi"
-	},
-	"Set package name and location": {
-	  "prefix": "dojoConfig",
-	  "body": [
-		"<script>",
-		"\tconst locationPath = location.pathname.replace(/\\/[^\\/]+$/,\"\");",
-		"\twindow.dojoConfig = {",
-		"\tpackages:[",
-		"\t\t{",
-		"\t\tname:\"app\",",
-		"\t\tlocation: locationPath + \"/app\"",
-		"\t\t}",
-		"\t]",
-		"\t}",
-		"</script>"
-	  ],
-	  "description": "Sets /app folder to be able to load packages using require([\"app/your_file.js\"]);"
-	},
-	"(Feature|CSV|GeoJSON)Layer": {
-	  "prefix": "queryLayer",
-	  "body": [
-		"${1:layer}  // queries all features in the layer",
-		"\t.queryFeatures().then(results => {",
-		"\t\t// queries features and returns a FeatureSet",
-		"\t})",
-		"\t.queryExtent().then(results => {",
-		"\t\t// queries features returns extent of features that satisfy query",
-		"\t})",
-		"\t.queryFeatureCount().then(results => {",
-		"\t\t// queries features and returns count of features",
-		"\t})",
-		"\t.queryObjectIds().then(results => {",
-		"\t\t// queries features and returns objectIds array of features",
-		"\t})",
-		],
-	  "description": "Queries all features in the layer (Feature,CSV,GeoJSON, ...)"
-	},
-	"(Feature|CSV|GeoJSON|Scene|Stream)LayerView": {
-	  "prefix": "queryLayerView",
-	  "body": [
-		"${1|Feature,CSV,GeoJSON,Scene,Stream|}LayerView // queries available features in view",
-		"\t.queryFeatures() // queries features and returns a FeatureSet",
-		"\t.queryExtent() // queries features returns extent of features that satisfy query",
-		"\t.queryFeatureCount() // queries features and returns count of features",
-		"\t.queryObjectIds() // queries features and returns objectIds array of features"
-	  ],
-	  "description": "Queries all features in the layer view"
-	},
-	"Load a queryable, filterable layer": {
-	  "prefix": "loadLayer (Feature|CSV|GeoJSON|...)",
-	  "body": [
-		"const layer = new ${1|Feature,Scene,Stream,CSV,GeoJSON|}Layer({",
-		"\turl: \"${2|service url,file url|}\"",
-		"});",
-		"${3:view}.map.add(layer);"
-	  ],
-	  "description": "Server-side layers (FeatureLayer, SceneLayer and StreamLayer) and client-side layers (CSVLayer, GeoJSONLayer, and client side FeatureLayer)"
-	},
-	"Create FeatureLayer with client-side": {
-	  "prefix": "featureLayerCS",
-	  "body": [
-		"const layer = new FeatureLayer({",
-		"\tsource: graphics,  // array of graphics objects",
-		"\tobjectIdField: \"OBJECTID\",",
-		"\tfields: [{",
-		"\t\tname: \"OBJECTID\",",
-		"\t\ttype: \"oid\"",
-		"\t}, {",
-		"\t\tname: \"url\",",
-		"\t\ttype: \"string\"",
-		"\t}],",
-		"\tpopupTemplate: {",
-		"\t\tcontent: \"<img src='{url}'>\"",
-		"\t},",
-		"\trenderer: simpleRenderer",
-		"});",
-		"",
-		"map.add(layer);"
-	  ],
-	  "description": "Using \"source\" property with a Collection of graphics"
-	},
-	"When layer the instance is created": {
-	  "prefix": "layerWhen",
-	  "body": [
-		"${1|AreaMeasurement,BaseDynamic,BaseElevation,BaseTile,BuildingScene,CSV,DirectLineMeasurement,Elevation,Feature,GeoJSON,GeoRSS,Graphics,Group,Imagery,ImageryTile,IntegratedMesh,KML,MapImage,MapNotes,OGCFeature,PointCloud,Scene,Stream,SubtypeGroup,Tile,Unknown,Unsupported,VectorTile,WCS,WFS,WMS,WMTS,WebTileLayer|}Layer.when(function(){",
-		"\t// This function will execute once the promise is resolved",
-		"}, function(error){",
-		"\t// This function will execute if the promise is rejected due to an error",
-		"});"
-	  ],
-	  "description": "This method takes two input parameters: a callback function and an errback function. The callback executes when the instance of the class loads. The errback executes if the instance of the class fails to load."
-	},
-	"Load a new Graphic": {
-	  "prefix": "graphic",
-	  "body": [
-		"let polylineGraphic = new Graphic({",
-		"\tgeometry: polylineGeometry,",
-		"\tsymbol: polylineSymbol,",
-		"\tattributes: attributes",
-		"});"
-	  ],
-	  "description": "Create an instance of esri/Graphic. It is a vector representation of real world geographic phenomena"
-	},
-	"Config ArcGIS API Key": {
-	  "prefix": "esriConfig.apiKey",
-	  "body": ["esriConfig.apiKey = \"${1:YOUR_API_KEY}\";"],
-	  "description": "An authorization string used to access a resource or service"
-	},
-	"Load a new SceneView (3D)": {
-	  "prefix": "SceneView",
-	  "body": [
-		"const view = new SceneView({",
-		"\tmap: ${1:map},",
-		"\tcamera: {",
-		"\t\tposition: {",
-		"\t\t\tx: -118.808,",
-		"\t\t\ty: 33.961,",
-		"\t\t\tz: 2000 // meters",
-		"\t\t},",
-		"\t\ttilt: 75",
-		"\t},",
-		"\tcontainer: \"${2:viewDiv}\"",
-		"});"
-	  ],
-	  "description": "Create an instance of esri/views/SceneView. A SceneView displays a 3D view of a Map or WebScene instance using WebGL"
-	},
-	"Load a new FeatureLayer": {
-		"prefix": "featureLayer",
-		"body": [
-		  "const fl = new FeatureLayer({",
-		  "\turl: \"${1:service-url}\"",
-		  "});",
-		  "map.add(fl);",
-		],
-		"description": "Create an instance of esri/layers/FeatureLayer"
-	},
-	"Load a new GeoJSONLayer": {
-		"prefix": "geojsonLayer",
-		"body": [
-		  "const geoJSONLayer = new GeoJSONLayer({",
-		  "\turl: \"${1:service-url}\",",
-		  "\tcopyright: \"${2:data-provider}\",",
-		  "});",
-		  "map.add(geoJSONLayer);",
-		],
-		"description": "Create an instance of esri/layers/GeoJSONLayer"
-	  }
+  "Find a layer by it's name": {
+    "prefix": "findLayer",
+    "body": [
+      "const fl = view.map.layers.find( l => l.title === \"${1:LayerTitle}\");"
+    ],
+    "description": ""
+  },
+  "Load a new MapView (2D)": {
+    "prefix": "MapView",
+    "body": [
+      "const view = new MapView({",
+      "\tcontainer: \"${1:viewDiv}\",",
+      "\tmap: ${2:map},",
+      "\tzoom: ${3:4},",
+      "\tcenter: [${4:15,65}]",
+      "});"
+    ],
+    "description": "Create an instance of esri/views/MapView"
+  },
+  "Get the API from the CDN": {
+    "prefix": "getApi",
+    "body": [
+      "<link rel=\"stylesheet\" href=\"https://js.arcgis.com/${1|4.20,4.19,4.18,4.17,4.16,1.15,4.14|}/esri/css/main.css\">",
+      "<script src=\"https://js.arcgis.com/${2|4.20,4.19,4.18,4.17,4.16,4.15,4.14|}\"></script>"
+    ],
+    "description": "Add script and link tags for jsapi"
+  },
+  "Set package name and location": {
+    "prefix": "dojoConfig",
+    "body": [
+      "<script>",
+      "\tconst locationPath = location.pathname.replace(/\\/[^\\/]+$/,\"\");",
+      "\twindow.dojoConfig = {",
+      "\tpackages:[",
+      "\t\t{",
+      "\t\tname:\"app\",",
+      "\t\tlocation: locationPath + \"/app\"",
+      "\t\t}",
+      "\t]",
+      "\t}",
+      "</script>"
+    ],
+    "description": "Sets /app folder to be able to load packages using require([\"app/your_file.js\"]);"
+  },
+  "(Feature|CSV|GeoJSON)Layer": {
+    "prefix": "queryLayer",
+    "body": [
+      "${1:layer}  // queries all features in the layer",
+      "\t.queryFeatures().then(results => {",
+      "\t\t// queries features and returns a FeatureSet",
+      "\t})",
+      "\t.queryExtent().then(results => {",
+      "\t\t// queries features returns extent of features that satisfy query",
+      "\t})",
+      "\t.queryFeatureCount().then(results => {",
+      "\t\t// queries features and returns count of features",
+      "\t})",
+      "\t.queryObjectIds().then(results => {",
+      "\t\t// queries features and returns objectIds array of features",
+      "\t})"
+    ],
+    "description": "Queries all features in the layer (Feature,CSV,GeoJSON, ...)"
+  },
+  "(Feature|CSV|GeoJSON|Scene|Stream)LayerView": {
+    "prefix": "queryLayerView",
+    "body": [
+      "${1|Feature,CSV,GeoJSON,Scene,Stream|}LayerView // queries available features in view",
+      "\t.queryFeatures() // queries features and returns a FeatureSet",
+      "\t.queryExtent() // queries features returns extent of features that satisfy query",
+      "\t.queryFeatureCount() // queries features and returns count of features",
+      "\t.queryObjectIds() // queries features and returns objectIds array of features"
+    ],
+    "description": "Queries all features in the layer view"
+  },
+  "Load a queryable, filterable layer": {
+    "prefix": "loadLayer (Feature|CSV|GeoJSON|...)",
+    "body": [
+      "const layer = new ${1|Feature,Scene,Stream,CSV,GeoJSON|}Layer({",
+      "\turl: \"${2|service url,file url|}\"",
+      "});",
+      "${3:view}.map.add(layer);"
+    ],
+    "description": "Server-side layers (FeatureLayer, SceneLayer and StreamLayer) and client-side layers (CSVLayer, GeoJSONLayer, and client side FeatureLayer)"
+  },
+  "Create FeatureLayer with client-side": {
+    "prefix": "featureLayerCS",
+    "body": [
+      "const layer = new FeatureLayer({",
+      "\tsource: graphics,  // array of graphics objects",
+      "\tobjectIdField: \"OBJECTID\",",
+      "\tfields: [{",
+      "\t\tname: \"OBJECTID\",",
+      "\t\ttype: \"oid\"",
+      "\t}, {",
+      "\t\tname: \"url\",",
+      "\t\ttype: \"string\"",
+      "\t}],",
+      "\tpopupTemplate: {",
+      "\t\tcontent: \"<img src='{url}'>\"",
+      "\t},",
+      "\trenderer: simpleRenderer",
+      "});",
+      "",
+      "map.add(layer);"
+    ],
+    "description": "Using \"source\" property with a Collection of graphics"
+  },
+  "When layer the instance is created": {
+    "prefix": "layerWhen",
+    "body": [
+      "${1|AreaMeasurement,BaseDynamic,BaseElevation,BaseTile,BuildingScene,CSV,DirectLineMeasurement,Elevation,Feature,GeoJSON,GeoRSS,Graphics,Group,Imagery,ImageryTile,IntegratedMesh,KML,MapImage,MapNotes,OGCFeature,PointCloud,Scene,Stream,SubtypeGroup,Tile,Unknown,Unsupported,VectorTile,WCS,WFS,WMS,WMTS,WebTileLayer|}Layer.when(function(){",
+      "\t// This function will execute once the promise is resolved",
+      "}, function(error){",
+      "\t// This function will execute if the promise is rejected due to an error",
+      "});"
+    ],
+    "description": "This method takes two input parameters: a callback function and an errback function. The callback executes when the instance of the class loads. The errback executes if the instance of the class fails to load."
+  },
+  "Load a new Graphic": {
+    "prefix": "graphic",
+    "body": [
+      "let polylineGraphic = new Graphic({",
+      "\tgeometry: polylineGeometry,",
+      "\tsymbol: polylineSymbol,",
+      "\tattributes: attributes",
+      "});"
+    ],
+    "description": "Create an instance of esri/Graphic. It is a vector representation of real world geographic phenomena"
+  },
+  "Config ArcGIS API Key": {
+    "prefix": "esriConfig.apiKey",
+    "body": ["esriConfig.apiKey = \"${1:YOUR_API_KEY}\";"],
+    "description": "An authorization string used to access a resource or service"
+  },
+  "Load a new SceneView (3D)": {
+    "prefix": "SceneView",
+    "body": [
+      "const view = new SceneView({",
+      "\tmap: ${1:map},",
+      "\tcamera: {",
+      "\t\tposition: {",
+      "\t\t\tx: -118.808,",
+      "\t\t\ty: 33.961,",
+      "\t\t\tz: 2000 // meters",
+      "\t\t},",
+      "\t\ttilt: 75",
+      "\t},",
+      "\tcontainer: \"${2:viewDiv}\"",
+      "});"
+    ],
+    "description": "Create an instance of esri/views/SceneView. A SceneView displays a 3D view of a Map or WebScene instance using WebGL"
+  },
+  "Load a new FeatureLayer": {
+    "prefix": "featureLayer",
+    "body": [
+      "const fl = new FeatureLayer({",
+      "\turl: \"${1:service-url}\"",
+      "});",
+      "map.add(fl);"
+    ],
+    "description": "Create an instance of esri/layers/FeatureLayer"
+  },
+  "Load a new GeoJSONLayer": {
+    "prefix": "geojsonLayer",
+    "body": [
+      "const geoJSONLayer = new GeoJSONLayer({",
+      "\turl: \"${1:service-url}\",",
+      "\tcopyright: \"${2:data-provider}\",",
+      "});",
+      "map.add(geoJSONLayer);"
+    ],
+    "description": "Create an instance of esri/layers/GeoJSONLayer"
+  },
+  "PopupTemplate constructor props": {
+    "prefix": "popupTemplate",
+    "body": [
+      "{",
+      "\toutFields: [\"*\"],",
+      "\ttitle: ${1|\"Value: {attribute}\",function(){}|},",
+      "\tid: ${2:\"myId\"},",
+      "\tclassName: \"${3:esri-icon-zoom-out-magnifying-glass}\",",
+      "\tcontent: ${4|[popupContent],\"<p>Content</p>\",function(){}|},",
+      "\tfieldInfos: [fieldInfo],",
+      "\texpressionInfos: [expressionInfo],",
+      "\tactions: [ActionButton],",
+      "\treturnGeometry: ${5|true,false|}",
+      "}"
+    ],
+    "description": "Create an instance of esri/PopupTemplate. Describe popup content"
+  },
+  "FieldInfo constructor props": {
+    "prefix": "fieldInfo",
+    "body": [
+      "{",
+      "\tfieldName: '${1:attrName}',",
+      "\tlabel: \"${2:field alias}\",",
+      "\tvisible: true,",
+      "\tformat: {",
+      "\t\tplaces: 0,",
+      "\t\tdigitSeparator: true",
+      "\t},",
+      "\tstatisticType: \"${3|count,sum,min,max,avg,stddev,var|}\",",
+      "\tisEditable: ${4|true,false|},",
+      "\tstringFieldOption: \"${5|rich-text,text-area,text-box|}\",",
+      "\ttooltip: \"Hint for editors\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/FieldInfo. Defines how a Field participate or not in a PopupTemplate"
+  },
+  "ExpressionInfo constructor props": {
+    "prefix": "expressionInfo",
+    "body": [
+      "{",
+      "\tname: \"${1:expressionName}\",",
+      "\ttitle: \"${2:expressionTitle}\",",
+      "\texpression: \"\\$feature.bachelor + \\$feature.master + \\$feature.doctorate\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/ExpressionInfo. The ExpressionInfo class defines the Arcade expressions executed in a layer's PopupTemplate."
+  },
+  "ActionButton constructor props": {
+    "prefix": "actionButton",
+    "body": [
+      "{",
+      "\ttitle: \"${1:btnText}\",",
+      "\tid: \"${2:btnId}\",",
+      "\timage: \"${3:<image-url>}\"",
+      "\t\t}"
+    ],
+    "description": "Create an instance of esri/support/actions/ActionButton. A customizable button that performs a specific action(s) used in widgets such as the Popup, LayerList, and BasemapLayerList."
+  },
+  "Capture custom action click": {
+    "prefix": "popupActionListener",
+    "body": [
+      "view.popup.on(\"trigger-action\", function (event) {",
+      "\tif (event.action.id === \"${1:btnId}\") {",
+      "\t\t// Custom logic",
+      "\t}",
+      "});"
+    ],
+    "description": "Capture when custom action was clicked"
+  },
+  "TextContent constructor props": {
+    "prefix": "popupTextContent",
+    "body": [
+      "{",
+      "\ttype: \"text\",",
+      "\ttext: \"${1:There are \\{Point_Count\\} trees within census block \\{BLOCKCE10\\}}\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/TextContent.  A TextContent popup element is used to define descriptive text as an element within the PopupTemplate's content."
+  },
+  "MediaContent constructor props": {
+    "prefix": "popupMediaContent",
+    "body": [
+      "{",
+      "\ttype: \"media\",",
+      "\tmediaInfos: [${1|chartMediaInfo,ImageMediaInfo|}],",
+      "\tactiveMediaInfoIndex: 1",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/MediaContent. Popup element contains an individual or array of chart and/or image media elements to display within a popup's content."
+  },
+  "FieldsContent constructor props": {
+    "prefix": "popupFieldsContent",
+    "body": ["{", "\ttype: \"fields\",", "\tfieldInfos: [${1:fieldInfo}]", "}"],
+    "description": "Create an instance of esri/popup/content/FieldsContent. Represents the FieldInfo associated with a feature."
+  },
+  "AttachmentsContent constructor props": {
+    "prefix": "popupAttachmentsContent",
+    "body": [
+      "{",
+      "\ttype: \"attachments\",",
+      "\tdisplayType: \"${1|preview,list|}\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/AttachmentsContent. Represents an attachment element associated with a feature. This resource is available only if the FeatureLayer.capabilities.data.supportsAttachment is true."
+  },
+  "CustomContent constructor props": {
+    "prefix": "popupCustomContent",
+    "body": [
+      "{",
+      "\ttype: \"custom\",",
+      "\toutFields: [\"*\"],",
+      "\tcreator: (function(graphic)) {",
+      "\t\t// creator function returns either string, HTMLElement, Widget, or Promise",
+      "\t}",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/CustomContent. Is used to provide a way to customize the popup's content. This content can be a combination of elements such as String, HTMLElement, Widget, or Promise"
+  },
+  "Charts constructor props": {
+    "prefix": "chartMediaInfo",
+    "body": [
+      "{",
+      "\ttype: \"${1|bar-chart,column-chart,line-chart,pie-chart|}\",",
+      "\tvalue: {",
+      "\t\tfields: [\"${2:<array of strings indicating fields>}\"],",
+      "\t\tnormalizeField: null,",
+      "\t\ttooltipField: \"${3:<field name>}\"",
+      "\t},",
+      "\ttitle: \"${4:<b>Count by type</b>}\",",
+      "\tcaption: \"${5:Per block}\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/<ChartType>MediaInfo. Types are: BarChart, ColumnChart, PieChart and LineChart"
+  },
+  "ImageMediaInfo constructor props": {
+    "prefix": "imageMediaInfo",
+    "body": [
+      "{",
+      "\ttitle: \"${1:<b>Image title</b>}\",",
+      "\ttype: \"image\",",
+      "\tcaption: \"${2:caption text}\",",
+      "\tvalue: {",
+      "\t\tsourceURL: \"${3:<image-url>}\"",
+      "\t}",
+      "}"
+    ],
+    "description": "Create an instance of esri/popup/content/ImageMediaInfo. Is a type of media element that represents images to display within a popup."
+  }
 }
-  
