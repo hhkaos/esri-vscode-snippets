@@ -120,7 +120,7 @@
   "Load a new Graphic": {
     "prefix": "graphic",
     "body": [
-      "let polylineGraphic = new Graphic({",
+      "new Graphic({",
       "\tgeometry: polylineGeometry,",
       "\tsymbol: polylineSymbol,",
       "\tattributes: attributes",
@@ -154,8 +154,10 @@
   "Load a new FeatureLayer": {
     "prefix": "featureLayer",
     "body": [
-      "const fl = new FeatureLayer({",
+      "new FeatureLayer({",
       "\turl: \"${1:service-url}\"",
+      "\tblendMode \"${1|average,color-burn,color-dodge,color,darken,destination-atop,destination-in,destination-out,destination-over,difference,exclusion,hard-light,hue,invert,lighten,lighter,luminosity,minus,multiply,normal,overlay,plus,reflect,saturation,screen,soft-light,source-atop,source-in,source-out,vivid-light,xor|}\":",
+      "\teffect: FeatureEffect",
       "});",
       "map.add(fl);"
     ],
@@ -166,6 +168,8 @@
     "body": [
       "const geoJSONLayer = new GeoJSONLayer({",
       "\turl: \"${1:service-url}\",",
+      "\tblendMode \"${1|average,color-burn,color-dodge,color,darken,destination-atop,destination-in,destination-out,destination-over,difference,exclusion,hard-light,hue,invert,lighten,lighter,luminosity,minus,multiply,normal,overlay,plus,reflect,saturation,screen,soft-light,source-atop,source-in,source-out,vivid-light,xor|}\":",
+      "\teffect: FeatureEffect",
       "\tcopyright: \"${2:data-provider}\",",
       "});",
       "map.add(geoJSONLayer);"
@@ -319,5 +323,106 @@
       "}"
     ],
     "description": "Create an instance of esri/popup/content/ImageMediaInfo. Is a type of media element that represents images to display within a popup."
+  },
+  "Recover clicked geometries": {
+    "prefix": "hitTest",
+    "body": [
+      "view",
+      "\t.hitTest(event, {",
+      "\t\tinclude: ${1:layerName},",
+      "\t})",
+      "\t.then(function (response) {",
+      "\t\tif (response.results.length) {",
+      "\t\t\t// do something",
+      "\t\t}",
+      "\t});"
+    ],
+    "description": "HitTest returns the topmost feature from each layer that intersects the specified screen coordinates."
+  },
+  "Load a new GraphicLayer": {
+    "prefix": "graphicLayer",
+    "body": [
+      "new GraphicsLayer({",
+      "\tgraphics: [graphics],",
+      "\tblendMode \"${1|average,color-burn,color-dodge,color,darken,destination-atop,destination-in,destination-out,destination-over,difference,exclusion,hard-light,hue,invert,lighten,lighter,luminosity,minus,multiply,normal,overlay,plus,reflect,saturation,screen,soft-light,source-atop,source-in,source-out,vivid-light,xor|}\":",
+      "\teffect: FeatureEffect,",
+      "\topacity: 1,",
+      "\ttitle: \"layerTitle\",",
+      "\tid: \"layerId\"",
+      "});"
+    ],
+    "description": "Create an instance of esri/layers/GraphicLayer. It contains one or more client-side Graphics. Each graphic in the GraphicsLayer is rendered in a LayerView inside either a SceneView or a MapView."
+  },
+  "FeatureEffect constructor props": {
+    "prefix": "featureEffect",
+    "body": [
+      "{",
+      "\tfilter: FeatureFilter,",
+      "\texcludedEffect: \"${1:grayscale(100%) opacity(30%)}\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/views/layers/support/FeatureEffect.  Allows you to emphasize or deemphasize features that satisfy a filter in 2D MapView. The includedEffect and excludedEffect properties allow you to apply CSS filters to features that are either included or excluded from the filter. "
+  },
+  "Point constructor props": {
+    "prefix": "pointGeometry",
+    "body": [
+      "{",
+      "\ttype: \"point\",",
+      "\tx: ${1:0}, // or longitude",
+      "\ty: ${2:0}, // or latitude",
+      "\tspatialReference: SpatialReference",
+      "}"
+    ],
+    "description": "Create an instance of esri/geometry/Point.  A location defined by X, Y, and Z coordinates."
+  },
+  "Polyline constructor props": {
+    "prefix": "polylineGeometry",
+    "body": [
+      "{",
+      "\ttype: \"polyline\",",
+      "\tpaths: [  // first path",
+      "\t\t[-97.06138,32.837,5],",
+      "\t\t[-97.06133,32.836,6],",
+      "\t\t[-97.06124,32.834,7]",
+      "\t], [  // second path",
+      "\t\t[-97.06326,32.759],",
+      "\t\t[-97.06298,32.755]",
+      "\t]",
+      "\tspatialReference: SpatialReference",
+      "}"
+    ],
+    "description": "Create an instance of esri/geometry/Polyline. A polyline contains an array of paths and spatialReference. Each path is represented as an array of points."
+  },
+  "Polygon constructor props": {
+    "prefix": "polygonGeometry",
+    "body": [
+      "{",
+      "\ttype: \"polygon\",",
+      "\trings: [",
+      "\t\t[  // first ring",
+      "\t\t\t[-97.06138,32.837,35.1,4.8],",
+      "\t\t\t[-97.06133,32.836,35.2,4.1],",
+      "\t\t\t[-97.06124,32.834,35.3,4.2],",
+      "\t\t\t[-97.06138,32.837,35.1,4.8]  // same as first vertex",
+      "\t\t], [  // second ring",
+      "\t\t\t[-97.06326,32.759,35.4],",
+      "\t\t\t[-97.06298,32.755,35.5],",
+      "\t\t\t[-97.06153,32.749,35.6],",
+      "\t\t\t[-97.06326,32.759,35.4]  // same as first vertex",
+      "\t\t]",
+      "\t],",
+      "\tspatialReference: SpatialReference",
+      "}"
+    ],
+    "description": "Create an instance of esri/geometry/Polygon. A polygon contains an array of rings and a spatialReference. Each ring is represented as an array of points. The first and last points of a ring must be the same"
+  },
+  "SpatialReference constructor props": {
+    "prefix": "spatialReference",
+    "body": [
+      "{",
+      "\twkid: ${1|4326 \t// WGS84 (lon\\, lat),102100 \t// Web Mercator (x\\, y),3857 \t// Web Mercator (x\\, y)|}",
+      "}"
+    ],
+    "description": "Create an instance of esri/geometry/SpatialReference. Defines the spatial reference of a view, layer, or task parameters. This indicates the Projected Coordinate System or the Geographic Coordinate System used to locate geographic features in the map"
   }
 }
