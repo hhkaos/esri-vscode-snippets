@@ -43,7 +43,7 @@
     ],
     "description": "Sets /app folder to be able to load packages using require([\"app/your_file.js\"]);"
   },
-  "(Feature|CSV|GeoJSON)Layer": {
+  "Server-side query": {
     "prefix": "queryLayer",
     "body": [
       "${1:layer}  // queries all features in the layer",
@@ -62,16 +62,16 @@
     ],
     "description": "Queries all features in the layer (Feature,CSV,GeoJSON, ...)"
   },
-  "(Feature|CSV|GeoJSON|Scene|Stream)LayerView": {
+  "Client-side query": {
     "prefix": "queryLayerView",
     "body": [
-      "${1|Feature,CSV,GeoJSON,Scene,Stream|}LayerView // queries available features in view",
-      "\t.queryFeatures() // queries features and returns a FeatureSet",
-      "\t.queryExtent() // queries features returns extent of features that satisfy query",
-      "\t.queryFeatureCount() // queries features and returns count of features",
-      "\t.queryObjectIds() // queries features and returns objectIds array of features"
+      "${1:view}.whenLayerView(layer).then(function(layerView){",
+      "\tlayerView.queryFeatures().then(function(results){",
+      "\t\tconsole.log(results.features);",
+      "\t});",
+      "});"
     ],
-    "description": "Queries all features in the layer view"
+    "description": "Queries all features in the layer view (Feature, CSV, GeoJSON, Scene, Stream, ...)"
   },
   "Load a queryable, filterable layer": {
     "prefix": "loadLayer (Feature|CSV|GeoJSON|...)",
@@ -82,7 +82,7 @@
     ],
     "description": "Server-side layers (FeatureLayer, SceneLayer and StreamLayer) and client-side layers (CSVLayer, GeoJSONLayer, and client side FeatureLayer)"
   },
-  "Create FeatureLayer with client-side": {
+  "New FeatureLayer (client-side)": {
     "prefix": "featureLayerCS",
     "body": [
       "new FeatureLayer({",
@@ -322,15 +322,16 @@
   "Recover clicked geometries": {
     "prefix": "hitTest",
     "body": [
-      "view",
-      "\t.hitTest(event, {",
-      "\t\tinclude: ${1:layerName},",
+      "view.on(\"click\", function(event) {",
+      "\tview.hitTest(event, {",
+      "\t\tinclude: layerName,",
       "\t})",
-      "\t.then(function (response) {",
-      "\t\tif (response.results.length) {",
-      "\t\t\t// do something",
-      "\t\t}",
-      "\t});"
+      "\t\t.then(function (response) {",
+      "\t\t\tif (response.results.length) {",
+      "\t\t\t\t// do something",
+      "\t\t\t}",
+      "\t\t});",
+      "});"
     ],
     "description": "HitTest returns the topmost feature from each layer that intersects the specified screen coordinates."
   },
@@ -419,5 +420,316 @@
       "}"
     ],
     "description": "Create an instance of esri/geometry/SpatialReference. Defines the spatial reference of a view, layer, or task parameters. This indicates the Projected Coordinate System or the Geographic Coordinate System used to locate geographic features in the map"
+  },
+  "Disable view navigation": {
+    "prefix": "disableNavigation",
+    "body": [
+      "${1:view}.when(view => {",
+      "\tconst stopEvtPropagation = event => {",
+      "\t\tevent.stopPropagation();",
+      "\t}",
+      "\t",
+      "\tview.on([\"mouse-wheel\", \"double-click\", \"drag\"], stopEvtPropagation);",
+      "\tview.on(\"double-click\", [\"Control\"], stopEvtPropagation);",
+      "\tview.on(\"drag\", [\"Shift\"], stopEvtPropagation);",
+      "\tview.on(\"drag\", [\"Shift\", \"Control\"], stopEvtPropagation);",
+      "\t",
+      "\tview.on(\"key-down\", function (event) {",
+      "\t\tconst prohibitedKeys = [\"+\", \"-\", \"Shift\", \"_\", \"=\", \"ArrowUp\", \"ArrowDown\", \"ArrowRight\", \"ArrowLeft\"];",
+      "\t\tconst keyPressed = event.key;",
+      "\t\tif (prohibitedKeys.indexOf(keyPressed) !== -1) {",
+      "\t\t\tevent.stopPropagation();",
+      "\t\t}",
+      "\t});",
+      "\t",
+      "\treturn view;",
+      "});"
+    ],
+    "description": ""
+  },
+  "View constraints": {
+    "prefix": "limitViewExtent",
+    "body": [
+      "${1:view}.constraints.geometry = {",
+      "\t\"type\": \"polygon\",",
+      "\t\"spatialReference\": {",
+      "\t\t\"wkid\": 4326",
+      "\t},",
+      "\t\"rings\": [",
+      "\t\t[",
+      "\t\t\t[\"-3.679609\", \"36.733922\"],",
+      "\t\t\t[\"-3.641753\", \"36.733922\"],",
+      "\t\t\t[\"-3.641753\", \"36.701392\"],",
+      "\t\t\t[\"-3.679609\", \"36.701392\"],",
+      "\t\t\t[\"-3.679609\", \"36.733922\"]",
+      "\t\t]",
+      "\t]",
+      "};"
+    ],
+    "description": "The area in which the user is allowed to navigate laterally."
+  },
+  "Convert 4326 => 3857": {
+    "prefix": "geographicToWebMercator",
+    "body": ["webMercatorUtils.geographicToWebMercator(geometry);"],
+    "description": "Use esri/geometry/support/webMercatorUtils. to convert a geometry from geographic units (wkid: 4326) to Web Mercator units (wkid: 3857)."
+  },
+  "Convert 3857 => 4326": {
+    "prefix": "webMercatorToGeographic",
+    "body": ["webMercatorUtils. webMercatorToGeographic(geometry);"],
+    "description": "Use esri/geometry/support/webMercatorUtils. to convert a geometry from Web Mercator units (wkid: 3857) to geographic units (wkid: 4326)"
+  },
+  "Init symbol from JSON": {
+    "prefix": "symbolFromJSON",
+    "body": [
+      "${1|SimpleMarker,SimpleLine,SimpleFill,PictureMarker,PictureFill,Text,WebStyle,CIM|}Symbol.fromJSON({",
+      "\t\"type\": \"esriSMS\",",
+      "\t\"style\": \"esriSMSSquare\",",
+      "\t\"color\": [ 76,115,0,255 ],",
+      "\t\"size\": 8,",
+      "\t\"angle\": 0,",
+      "\t\"xoffset\": 0,",
+      "\t\"yoffset\": 0,",
+      "\t\"outline\": {",
+      "\t\t\"color\": [ 152,230,0,255 ],",
+      "\t\t\"width\": 1",
+      "\t}",
+      "});"
+    ],
+    "description": "Use esri/symbols/<Type>Symbol to creates a new instance of this class and initializes it with values from a JSON object generated from an ArcGIS product."
+  },
+  "Init renderer using utils": {
+    "prefix": "rendererJsonUtils.fromJSON",
+    "body": [
+      "rendererJsonUtils.fromJSON({",
+      "\t\"authoringInfo\":null,",
+      "\t\"type\":\"uniqueValue\",",
+      "\t\"field1\":\"CLASS\",",
+      "\t\"field2\":null,",
+      "\t\"field3\":null,",
+      "\t\"expression\":null,",
+      "\t\"fieldDelimiter\":null,",
+      "\t\"defaultSymbol\":{",
+      "\t\t\"color\":[235, 235, 235, 255],",
+      "\t\t\"type\":\"esriSLS\",",
+      "\t\t\"width\":3,",
+      "\t\t\"style\":\"esriSLSShortDot\"",
+      "\t},",
+      "\t\"defaultLabel\":\"Other major roads\",",
+      "\t\"uniqueValueInfos\":[",
+      "\t\t{",
+      "\t\t\t\"value\":\"I\",",
+      "\t\t\t\"symbol\":{",
+      "\t\t\t\t\"color\":[255, 170, 0, 255],",
+      "\t\t\t\t\"type\":\"esriSLS\",",
+      "\t\t\t\t\"width\":10,",
+      "\t\t\t\t\"style\":\"esriSLSSolid\"",
+      "\t\t\t},",
+      "\t\t\t\"label\":\"Interstate\"",
+      "\t\t},",
+      "\t\t{",
+      "\t\t\t\"value\":\"U\",",
+      "\t\t\t\"symbol\":{",
+      "\t\t\t\t\"color\":[223, 115, 255, 255],",
+      "\t\t\t\t\"type\":\"esriSLS\",",
+      "\t\t\t\t\"width\":7,",
+      "\t\t\t\t\"style\":\"esriSLSSolid\"",
+      "\t\t\t},",
+      "\t\t\t\"label\":\"US Highway\"",
+      "\t\t}",
+      "\t]",
+      "});"
+    ],
+    "description": "Use esri/renderers/support/jsonUtils to create a renderer from an object obtained via REST request"
+  },
+  "Init geometry from JSON": {
+    "prefix": "geometryFromJSON",
+    "body": [
+      "${1|Point,Polyline,Polygon,Extent,Multipoint,Mesh|}.fromJSON(json)"
+    ],
+    "description": "Use esri/geometry/<Type> to create a geometry from an object obtained via REST request"
+  },
+  "Generate a DictionaryRenderer": {
+    "prefix": "dictionaryRenderer",
+    "body": [
+      "new DictionaryRenderer({",
+      "\turl: \"./alternative-fuel-stations\",",
+      "\tfieldMap: {",
+      "\t\tfuel_type: \"Fuel_Type_Code\",",
+      "\t\tname: \"Station_Name\"",
+      "\t},",
+      "\tconfig: {",
+      "\t\tshow_label: \"false\"",
+      "\t}",
+      "});"
+    ],
+    "description": "Use esri/renderers/DictionaryRenderer to symbolize layers using a dictionary of CIMSymbols configured with multiple attributes"
+  },
+  "Generate a DotDensity Renderer": {
+    "prefix": "dotDensity",
+    "body": [
+      "{",
+      "\ttype: 'dot-density',",
+      "\tdotValue: ${1:initialValue},",
+      "\toutline: null,",
+      "\tlegendOptions: {",
+      "\t\tunit: \"${2:unitDot}\"",
+      "\t},",
+      "\tattributes: [",
+      "\t\t{",
+      "\t\t\tfield: \"${3:field_1}\",",
+      "\t\t\tcolor: \"${4:color_1}\",",
+      "\t\t\tlabel: \"${5:label_1}\"",
+      "\t\t},",
+      "\t\t{",
+      "\t\t\tfield: \"${6:field_2}\",",
+      "\t\t\tcolor: \"${7:color_2}\",",
+      "\t\t\tlabel: \"${8:label_2}\"",
+      "\t\t}",
+      "\t]",
+      "}"
+    ],
+    "description": "Generate a DotDensity Renderer"
+  },
+  "Generate a HeatmapRenderer": {
+    "prefix": "heatmapRenderer",
+    "body": [
+      "new HeatmapRenderer({",
+      "\tfield: \"${1:crime_count}\",",
+      "\tcolorStops: [",
+      "\t\t{ ratio: 0, color: \"rgba(255, 255, 255, 0)\" },",
+      "\t\t{ ratio: 0.2, color: \"rgba(255, 255, 255, 1)\" },",
+      "\t\t{ ratio: 0.5, color: \"rgba(255, 140, 0, 1)\" },",
+      "\t\t{ ratio: 0.8, color: \"rgba(255, 140, 0, 1)\" },",
+      "\t\t{ ratio: 1, color: \"rgba(255, 0, 0, 1)\" }",
+      "\t],",
+      "\tminPixelIntensity: 0,",
+      "\tmaxPixelIntensity: 5000",
+      "})"
+    ],
+    "description": "Use esri/renderers/HeatmapRenderer raster surface, emphasizing areas with a high density of points. This renderer uses a Gaussian Blur to determine the strength of the influence of each point over an area determined by the blurRadius."
+  },
+  "Init renderer from JSON": {
+    "prefix": "rendererFromJSON",
+    "body": [
+      "${1|Simple,UniqueValue,ClassBreaks,Dictionary,DotDensity,Heatmap|}Renderer.fromJSON(json);"
+    ],
+    "description": "Init renderer from JSON"
+  },
+  "Init symbol using utils": {
+    "prefix": "symbolJsonUtils.fromJSON",
+    "body": [
+      "symbolJsonUtils.fromJSON({",
+      "\t\"angle\": -30,",
+      "\t\"xoffset\": 0,",
+      "\t\"yoffset\": 0,",
+      "\t\"type\": \"esriPMS\",",
+      "\t\"url\": \"http://www.esri.com/careers/profiles/~/media/Images/Content/graphics/icons/socialmedia/pinterest1.png\",",
+      "\t\"width\": 18,",
+      "\t\"height\": 18",
+      "});"
+    ],
+    "description": "Use esri/symbols/support/jsonUtils to create a symbol from an object obtained via REST request"
+  },
+  "Init geometry using utils": {
+    "prefix": "geometryJsonUtils.fromJSON",
+    "body": ["geometryJsonUtils.fromJSON(${1:json});"],
+    "description": "Use esri/geometry/support/jsonUtils to create a geometry from an object obtained via REST request"
+  },
+  "Circle constructor props": {
+    "prefix": "circleGeometry",
+    "body": [
+      "{",
+      "\ttype: \"polygon\",",
+      "\tcenter: [ -113, 36 ],",
+      "\tgeodesic: ${1|true,false|},",
+      "\tnumberOfPoints: 100,",
+      "\tradius: 100,",
+      "\tradiusUnit: \"${1|feet,kilometers,meters,miles,nautical-miles,yards|}\"",
+      "}"
+    ],
+    "description": "Create an instance of esri/geometry/Circle, which is a Polygon created by specifying a center point and a radius."
+  },
+  "Sketch widget": {
+    "prefix": "sketch",
+    "body": [
+      "const sketchWidget = new Sketch({",
+      "\tlayer: ${1:graphicsLayer},",
+      "\tview: ${2:view}",
+      "});"
+      "",
+      "${1}.ui.add(sketchWidget, \"top-right\");"
+    ],
+    "description": "Create an instance of esri/widgets/Sketch. Provides a simple UI for creating and updating graphics on a MapView or a SceneView"
+  },
+  "Search widget": {
+    "prefix": "search",
+    "body": [
+      "const searchWidget = new Search({",
+      "\tview: ${1:view}",
+      "});",
+      "",
+      "${1}.ui.add(searchWidget, \"top-right\");"
+    ],
+    "description": "Create an instance of esri/widgets/Search. It provides a way to perform search operations on locator service(s), map/feature service feature layer(s), etc."
+  },
+  "ElevationProfile widget": {
+    "prefix": "elevationProfile",
+    "body": [
+      "const elevationProfile = new ElevationProfile({",
+      "\tview: ${1:view}",
+      "});",
+      "",
+      "${1}.ui.add(elevationProfile, \"top-right\");"
+    ],
+    "description": "Create an instance of esri/widgets/ElevationProfile. It is used to generate and display an elevation profile from an input line graphic."
+  },
+  "Swipe widget": {
+    "prefix": "swipe",
+    "body": [
+      "let swipe = new Swipe({",
+      "\tview: ${1:view},",
+      "\tleadingLayers: [layer1, layer2],",
+      "\ttrailingLayers: [layer3],",
+      "\tdirection: \"${2|vertical,horizontal|}\",",
+      "\tposition: 50",
+      "});",
+      "${1}.ui.add(swipe);",
+    ],
+    "description": "Create an instance of esri/widgets/Swipe. It provides a tool to show a portion of a layer or layers on top of a map."
+  },
+  "Detect WebGL support": {
+    "prefix": "webgl",
+    "body": [
+      "view.when(() => {",
+      "\t// View successfully loaded",
+      "})",
+      "\t.catch((error) => {",
+      "\t\tif (error.name.includes(\"webgl\")) {",
+      "\t\t\t// View was rejected, show webgl unsupported message and turn off the viewDiv",
+      "\t\t\tdocument.getElementById(\"viewDiv\").style.display = \"none\";",
+      "\t\t}",
+      "\t});",
+    ],
+    "description": ""
+  },
+  "Retrieves data or uploads a file": {
+    "prefix": "esriRequest",
+    "body": [
+      "esriRequest(url, {",
+      "\tresponseType: \"${1|json,text,array-buffer,blob,image,native,document,xml|}\",",
+      "\tmethod: \"${2|auto,delete,head,post,put|}\",",
+      "\tauthMode: \"${|auto,anonymous,immediate,no-prompt|}\"",
+      "}).then(function(response){",
+      "\t// The requested data",
+      "\tconsole.log(response.data);",
+      "}).catch((err) => {",
+      "\tif (err.name === 'AbortError') {",
+      "\t\tconsole.log('Request aborted');",
+      "\t} else {",
+      "\t\tconsole.error('Error encountered', err);",
+      "\t}",
+      "});",
+    ],
+    "description": "Use esri/request retrieves data from a remote server or uploads a file."
   }
 }
