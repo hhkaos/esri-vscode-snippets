@@ -1,6 +1,6 @@
 # esri-vscode-snippets
 
-Here I share the [User Snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets) I have in my local folder: `~/Library/Applications Support/Code/User/snippets`. Just in case you want to reuse any of them.
+Here I share the **Global** [User Snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets) I have in my local folder: `~/Library/Applications Support/Code/User/snippets`. Just in case you want to reuse any of them.
 
 ![VS code user snippets](./snippets-screenshots.png)
 
