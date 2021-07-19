@@ -7,7 +7,7 @@
     "description": ""
   },
   "Load a new MapView (2D)": {
-    "prefix": "MapView",
+    "prefix": "mapView",
     "body": [
       "new MapView({",
       "\tcontainer: \"${1:viewDiv}\",",
@@ -126,12 +126,12 @@
     "description": "Create an instance of esri/Graphic. It is a vector representation of real world geographic phenomena"
   },
   "Config ArcGIS API Key": {
-    "prefix": "esriConfig.apiKey",
+    "prefix": "apiKey",
     "body": ["esriConfig.apiKey = \"${1:YOUR_API_KEY}\";"],
     "description": "An authorization string used to access a resource or service"
   },
   "Load a new SceneView (3D)": {
-    "prefix": "SceneView",
+    "prefix": "sceneView",
     "body": [
       "new SceneView({",
       "\tmap: ${1:map},",
@@ -498,7 +498,7 @@
     "description": "Use esri/symbols/<Type>Symbol to creates a new instance of this class and initializes it with values from a JSON object generated from an ArcGIS product."
   },
   "Init renderer using utils": {
-    "prefix": "rendererJsonUtils.fromJSON",
+    "prefix": "rendererJsonUtils",
     "body": [
       "rendererJsonUtils.fromJSON({",
       "\t\"authoringInfo\":null,",
@@ -565,7 +565,7 @@
     "description": "Use esri/renderers/DictionaryRenderer to symbolize layers using a dictionary of CIMSymbols configured with multiple attributes"
   },
   "Generate a DotDensity Renderer": {
-    "prefix": "dotDensity",
+    "prefix": "dotDensityRenderer",
     "body": [
       "{",
       "\ttype: 'dot-density',",
@@ -616,7 +616,7 @@
     "description": "Init renderer from JSON"
   },
   "Init symbol using utils": {
-    "prefix": "symbolJsonUtils.fromJSON",
+    "prefix": "symbolJsonUtils",
     "body": [
       "symbolJsonUtils.fromJSON({",
       "\t\"angle\": -30,",
@@ -631,7 +631,7 @@
     "description": "Use esri/symbols/support/jsonUtils to create a symbol from an object obtained via REST request"
   },
   "Init geometry using utils": {
-    "prefix": "geometryJsonUtils.fromJSON",
+    "prefix": "geometryJsonUtils",
     "body": ["geometryJsonUtils.fromJSON(${1:json});"],
     "description": "Use esri/geometry/support/jsonUtils to create a geometry from an object obtained via REST request"
   },

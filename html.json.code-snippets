@@ -1,6 +1,6 @@
 {
-  "Map-centric style": {
-    "prefix": "Full map layout",
+  "Full map layout": {
+    "prefix": "fullMap",
     "body": [
       "<style>",
       "\thtml,",
